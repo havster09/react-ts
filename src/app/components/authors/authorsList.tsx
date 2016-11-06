@@ -1,31 +1,23 @@
 import * as React from 'react';
-import {AuthorApi} from "../../../api/authorApi";
+import {Link} from "react-router";
 
 interface IMainProps {
-  props:any;
-  author:any;
+  authors: any[];
 };
 
 interface IMainState {
-  authors:any[];
+
 };
 
-export class Authors extends React.Component<IMainProps, IMainState> {
-  constructor(props:any) {
+export class AuthorsList extends React.Component<IMainProps, IMainState> {
+  constructor(props: any) {
     super(props);
-    this.state = {
-      authors: []
-    };
   }
 
-  componentWillMount() {
-    this.setState({authors: AuthorApi.getAllAuthors()});
-  }
-
-  createAuthorRow(author:any) {
+  createAuthorRow(author: any) {
     return (
       <tr key={author.id}>
-        <td><a href={'/#authors/' + author.id}>{author.id}</a></td>
+        <td><Link to={`/manageAuthor/${author.id}`}>{author.id}</Link></td>
         <td>{author.firstName} {author.lastName}</td>
       </tr>
     );
@@ -37,11 +29,13 @@ export class Authors extends React.Component<IMainProps, IMainState> {
         <h1>Authors</h1>
         <table className="table">
           <thead>
+          <tr>
           <th>Id</th>
           <th>Name</th>
+          </tr>
           </thead>
           <tbody>
-          {this.state.authors.map(this.createAuthorRow, this)}
+          {this.props.authors.map(this.createAuthorRow, this)}
           </tbody>
         </table>
       </div>

@@ -1,65 +1,107 @@
-//This file is mocking a web API by hitting hard coded data.
-import * as _ from 'lodash';
+// This file mocks a web API by working with the hard-coded data below.
+// It uses setTimeout to simulate the delay of an AJAX call.
+// All calls return promises.
+
+const delay = 1000;
+
+const courses = [
+  {
+    id: "react-flux-building-applications",
+    title: "Building Applications in React and Flux",
+    watchHref: "http://www.pluralsight.com/courses/react-flux-building-applications",
+    authorId: "cory-house",
+    length: "5:08",
+    category: "JavaScript"
+  },
+  {
+    id: "clean-code",
+    title: "Clean Code: Writing Code for Humans",
+    watchHref: "http://www.pluralsight.com/courses/writing-clean-code-humans",
+    authorId: "cory-house",
+    length: "3:10",
+    category: "Software Practices"
+  },
+  {
+    id: "architecture",
+    title: "Architecting Applications for the Real World",
+    watchHref: "http://www.pluralsight.com/courses/architecting-applications-dotnet",
+    authorId: "cory-house",
+    length: "2:52",
+    category: "Software Architecture"
+  },
+  {
+    id: "career-reboot-for-developer-mind",
+    title: "Becoming an Outlier: Reprogramming the Developer Mind",
+    watchHref: "http://www.pluralsight.com/courses/career-reboot-for-developer-mind",
+    authorId: "cory-house",
+    length: "2:30",
+    category: "Career"
+  },
+  {
+    id: "web-components-shadow-dom",
+    title: "Web Component Fundamentals",
+    watchHref: "http://www.pluralsight.com/courses/web-components-shadow-dom",
+    authorId: "cory-house",
+    length: "5:10",
+    category: "HTML5"
+  }
+];
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
+}
 
 //This would be performed on the server in a real app. Just stubbing in.
-var _generateId = function(author) {
-	return author.firstName.toLowerCase() + '-' + author.lastName.toLowerCase();
+const generateId = (course) => {
+  return replaceAll(course.title, ' ', '-');
 };
 
-var _clone = function(item) {
-	return JSON.parse(JSON.stringify(item)); //return cloned copy so that the item is passed by value instead of by reference
-};
+class CourseApi {
+  static getAllCourses() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(Object.assign([], courses));
+      }, delay);
+    });
+  }
 
-var authors =
-  [
-    {
-      id: 'cory-house',
-      firstName: 'Cory',
-      lastName: 'House'
-    },
-    {
-      id: 'scott-allen',
-      firstName: 'Scott',
-      lastName: 'Allen'
-    },
-    {
-      id: 'dan-wahlin',
-      firstName: 'Dan',
-      lastName: 'Wahlin'
-    }
-  ];
+  static saveCourse(course) {
+    course = Object.assign({}, course); // to avoid manipulating object passed in.
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Simulate server-side validation
+        const minCourseTitleLength = 1;
+        if (course.title.length < minCourseTitleLength) {
+          reject(`Title must be at least ${minCourseTitleLength} characters.`);
+        }
 
-export const AuthorApi = {
-	getAllAuthors: function() {
-		return _clone(authors);
-	},
+        if (course.id) {
+          const existingCourseIndex = courses.findIndex(a => a.id == course.id);
+          courses.splice(existingCourseIndex, 1, course);
+        } else {
+          //Just simulating creation here.
+          //The server would generate ids and watchHref's for new courses in a real app.
+          //Cloning so copy returned is passed by value rather than by reference.
+          course.id = generateId(course);
+          course.watchHref = `http://www.pluralsight.com/courses/${course.id}`;
+          courses.push(course);
+        }
 
-	getAuthorById: function(id) {
-		var author = _.find(authors, {id: id});
-		return _clone(author);
-	},
+        resolve(course);
+      }, delay);
+    });
+  }
 
-	saveAuthor: function(author) {
-		//pretend an ajax call to web api is made here
-		console.log('Pretend this just saved the author to the DB via AJAX call...');
+  static deleteCourse(courseId) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        //noinspection TypeScriptUnresolvedVariable
+        const indexOfCourseToDelete = courses.findIndex(course => course.id == courseId);
+        courses.splice(indexOfCourseToDelete, 1);
+        resolve();
+      }, delay);
+    });
+  }
+}
 
-		if (author.id) {
-			var existingAuthorIndex = _.indexOf(authors, _.find(authors, {id: author.id}));
-			authors.splice(existingAuthorIndex, 1, author);
-		} else {
-			//Just simulating creation here.
-			//The server would generate ids for new authors in a real app.
-			//Cloning so copy returned is passed by value rather than by reference.
-			author.id = _generateId(author);
-			authors.push(_clone(author));
-		}
-
-		return author;
-	},
-
-	deleteAuthor: function(id) {
-		console.log('Pretend this just deleted the author from the DB via an AJAX call...');
-		_.remove(authors, { id: id});
-	}
-};
-
+export default CourseApi;

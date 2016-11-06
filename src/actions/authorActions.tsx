@@ -1,24 +1,22 @@
+import AuthorApi from '../api/authorApi';
 import * as types from './actionTypes';
-import courseApi from '../api/courseApi';
+import {beginAjaxCall} from "./ajaxStatusActions";
+// import {beginAjaxCall} from './ajaxStatusActions';
 
-export function createCourse(course: any) {
-  debugger;
-  return {type:'CREATE_COURSE',course};
+export function loadAuthorsSuccess(authors) {
+  return {type:types.LOAD_AUTHORS_SUCCESS, authors};
 }
 
-export function loadCoursesSuccess(courses) {
-  return {type:types.LOAD_COURSES_SUCCESS, courses};
+export function loadAuthors() {
+  return dispatch => {
+    dispatch(beginAjaxCall());
+    return AuthorApi.getAllAuthors().then((authors) => {
+      dispatch(loadAuthorsSuccess(authors));
+    }).catch((error) => {
+      throw(error);
+    });
+  };
 }
 
-export function loadCourses() {
-  return function(dispatch) {
-    return courseApi.getAllCourses().then((courses) => {
-      dispatch(loadCoursesSuccess(courses))
-      })
-      .catch((error) => {
-        throw error;
-      });
-  }
-}
 
 

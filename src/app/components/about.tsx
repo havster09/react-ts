@@ -1,18 +1,21 @@
-/// <reference path="../../../typings/index.d.ts" />
-
 import * as React from 'react';
 
 interface IMainProps {};
 
 interface IMainState {};
 
-const mainHeader:string = 'Recording Preferences';
+export class About extends React.Component<IMainProps, IMainState> {
+  componentWillMount() {
+    // if(!confirm("Are you sure ?")) {
+    //   // todo history.back
+    //   history.back();
+    // }
+  }
 
-export class Home extends React.Component<IMainProps, IMainState> {
   render() {
     return (
-      <div className='jumbotron'>
-       <h1>{mainHeader}</h1>
+      <div>
+        <h1>About Page</h1>
       </div>
     );
   }

@@ -7,17 +7,23 @@ interface IMainProps {
   placeholder?: string;
   value?: string;
   error?: string;
+  defaultOption: string;
+  options: any[];
 }
 
 interface IMainState {
 
 }
 
-export class Input extends React.Component<IMainProps, IMainState> {
+export class SelectInput extends React.Component<IMainProps, IMainState> {
   static propTypes = {
-    name:  React.PropTypes.string.isRequired,
-    label:  React.PropTypes.string.isRequired,
-    onChange:  React.PropTypes.func.isRequired
+    name: React.PropTypes.string.isRequired,
+    label: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func.isRequired,
+    value: React.PropTypes.string,
+    error: React.PropTypes.string,
+    defaultOption: React.PropTypes.string,
+    options: React.PropTypes.arrayOf(React.PropTypes.object)
   };
 
   constructor(props: any) {
@@ -25,22 +31,23 @@ export class Input extends React.Component<IMainProps, IMainState> {
   }
 
   render() {
-    let wrapperClass = "form-group";
-    if (this.props.error && this.props.error.length > 0) {
-      wrapperClass += " " + "has-error";
-    }
     return (
-      <div className={wrapperClass}>
+      <div className="form-group">
         <label htmlFor={this.props.name}>{this.props.label}</label>
         <div className="field">
-          <input type="text"
-                 name={this.props.name}
-                 className="form-control"
-                 placeholder={this.props.placeholder}
-                 ref={this.props.name}
-                 value={this.props.value}
-                 onChange={this.props.onChange}/>
-          <div className="input">{this.props.error}</div>
+          {/* Note, value is set here rather than on the option - docs: https://facebook.github.io/react/docs/forms.html */}
+          <select
+            name={this.props.name}
+            value={this.props.value}
+            onChange={this.props.onChange}
+            className="form-control">
+            <option value="">{this.props.defaultOption}</option>
+            {this.props.options.map((option) => {
+              return <option key={option.value} value={option.value}>{option.text}</option>;
+            })
+            }
+          </select>
+          {this.props.error && <div className="alert alert-danger">{this.props.error}</div>}
         </div>
       </div>
     );

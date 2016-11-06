@@ -4,11 +4,11 @@ interface IMainProps {};
 
 interface IMainState {};
 
-export class About extends React.Component<IMainProps, IMainState> {
+export class NotFoundPage extends React.Component<IMainProps, IMainState> {
   render() {
     return (
       <div>
-        <h1>About Page</h1>
+        <h1>Page not found</h1>
       </div>
     );
   }

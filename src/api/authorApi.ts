@@ -1,8 +1,5 @@
-"use strict";
-
 //This file is mocking a web API by hitting hard coded data.
-var authors = require('./authorData').authors;
-var _ = require('lodash');
+import * as _ from 'lodash';
 
 //This would be performed on the server in a real app. Just stubbing in.
 var _generateId = function(author) {
@@ -13,10 +10,37 @@ var _clone = function(item) {
 	return JSON.parse(JSON.stringify(item)); //return cloned copy so that the item is passed by value instead of by reference
 };
 
-export const AuthorApi = {
-	getAllAuthors: function() {
+var authors =
+  [
+    {
+      id: 'cory-house',
+      firstName: 'Cory',
+      lastName: 'House'
+    },
+    {
+      id: 'scott-allen',
+      firstName: 'Scott',
+      lastName: 'Allen'
+    },
+    {
+      id: 'dan-wahlin',
+      firstName: 'Dan',
+      lastName: 'Wahlin'
+    }
+  ];
+
+const AuthorApi = {
+	returnAllAuthors: function() {
 		return _clone(authors);
 	},
+
+  getAllAuthors() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(Object.assign([], authors));
+      }, 1000);
+    });
+  },
 
 	getAuthorById: function(id) {
 		var author = _.find(authors, {id: id});
@@ -47,3 +71,4 @@ export const AuthorApi = {
 	}
 };
 
+export default AuthorApi;
